@@ -8,21 +8,43 @@ import axios from 'axios';
 export default class Home extends Component {
   state = {
     cities: [],
+    europeCities: {},
+    asiaCities: {},
+    exoticCities: {},
   };
 
   async componentDidMount() {
-    const recommendedCities = await axios.get(
-      `${window.apiHost}/cities/recommended`
-    );
-    this.setState({ cities: recommendedCities.data });
+    const citiesUrl = `${window.apiHost}/cities/recommended`;
+    const europeCitiesUrl = `${window.apiHost}/cities/europe`;
+    const asiaCitiesUrl = `${window.apiHost}/cities/asia`;
+    const exoticCitiesUrl = `${window.apiHost}/cities/exotic`;
+
+    const citiesPromises = [];
+
+    citiesPromises.push(axios.get(citiesUrl));
+    citiesPromises.push(axios.get(europeCitiesUrl));
+    citiesPromises.push(axios.get(asiaCitiesUrl));
+    citiesPromises.push(axios.get(exoticCitiesUrl));
+
+    Promise.all(citiesPromises).then(data => {
+      const recommendedCities = data[0].data;
+      const europeCities = data[1].data;
+      const asiaCities = data[2].data;
+      const exoticCities = data[3].data;
+
+      this.setState({
+        cities: recommendedCities,
+        europeCities,
+        asiaCities,
+        exoticCities,
+      });
+    });
   }
   render() {
     if (this.state.cities.length === 0) {
       return <Spinner />;
     }
 
-    const recCities = <Cities cities={this.state.cities} />;
-    console.log(recCities);
     return (
       <div className="container-fluid">
         <div className="row">
@@ -31,7 +53,34 @@ export default class Home extends Component {
               <SearchBox />
             </div>
           </div>
-          {recCities}
+        </div>
+        <div className="container-fluid lower-fold">
+          <div className="row">
+            <div className="col s12">
+              <Cities
+                cities={this.state.cities}
+                header="Recommonded Cities For You"
+              />
+            </div>
+            <div className="col s12">
+              <Cities
+                cities={this.state.europeCities.cities}
+                header={this.state.europeCities.header}
+              />
+            </div>
+            <div className="col s12">
+              <Cities
+                cities={this.state.asiaCities.cities}
+                header={this.state.asiaCities.header}
+              />
+            </div>
+            <div className="col s12">
+              <Cities
+                cities={this.state.exoticCities.cities}
+                header={this.state.exoticCities.header}
+              />
+            </div>
+          </div>
         </div>
       </div>
     );

@@ -1,10 +1,14 @@
-
-.home{
+.home {
   padding: 0px !important;
 }
 
-.home .upper-fold{
+.home .upper-fold {
   height: 100vh !important;
   background-image: url('https://marcoislandbeachgetaway.com/wp-content/uploads/2016/01/MarcoIslandHomePage-e1465677846610.jpg');
   background-size: cover;
+}
+
+.lower-fold {
+  padding-left: 80px;
+  padding-right: 80px;
 }
