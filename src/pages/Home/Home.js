@@ -3,6 +3,7 @@ import './Home.css';
 import SearchBox from './SearchBox';
 import Spinner from '../../utility/Spinner/Spinner';
 import Cities from '../../utility/City/Cities';
+import Activities from '../../utility/Activity/Activities';
 import axios from 'axios';
 
 export default class Home extends Component {
@@ -11,6 +12,7 @@ export default class Home extends Component {
     europeCities: {},
     asiaCities: {},
     exoticCities: {},
+    activities: [],
   };
 
   async componentDidMount() {
@@ -39,6 +41,10 @@ export default class Home extends Component {
         exoticCities,
       });
     });
+
+    const activitiesUrl = `${window.apiHost}/activities/today`;
+    const activities = await axios.get(activitiesUrl);
+    this.setState({ activities });
   }
   render() {
     if (this.state.cities.length === 0) {
@@ -62,6 +68,14 @@ export default class Home extends Component {
                 header="Recommonded Cities For You"
               />
             </div>
+
+            <div className="col s12">
+              <Activities
+                activities={this.state.activities}
+                header="Today In your Area"
+              />
+            </div>
+
             <div className="col s12">
               <Cities
                 cities={this.state.europeCities.cities}
