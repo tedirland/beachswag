@@ -1,15 +1,33 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import Point from './Point';
+import './SingleFullVenue.css';
 
 export default class SingleFullVenue extends Component {
-  state = { singleVenue: {} };
+  state = {
+    singleVenue: {},
+    points: [],
+  };
   async componentDidMount() {
     const vid = this.props.match.params.vid;
     const url = `${window.apiHost}/venue/${vid}`;
 
     const axiosResponse = await axios.get(url);
     const singleVenue = axiosResponse.data;
-    this.setState({ singleVenue });
+
+    const pointsUrl = `${window.apiHost}/points/get`;
+    const pointsAxiosResponse = await axios.get(pointsUrl);
+
+    const points = singleVenue.points.split(',').map((point, i) => {
+      return (
+        <Point
+          key={i}
+          pointDesc={pointsAxiosResponse.data}
+          point={point}
+        ></Point>
+      );
+    });
+    this.setState({ singleVenue, points });
   }
   render() {
     console.log(this.state.singleVenue);
@@ -26,6 +44,8 @@ export default class SingleFullVenue extends Component {
           <div className="guests">{sv.guests}</div>
 
           <div className="divider"></div>
+
+          {this.state.points}
         </div>
       </div>
     );
